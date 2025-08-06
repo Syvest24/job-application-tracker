@@ -1,16 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './components/ui/card';
-import { Button } from './components/ui/button';
-import { Input } from './components/ui/input';
-import { Label } from './components/ui/label';
-import { Textarea } from './components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select';
-import { Calendar } from './components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from './components/ui/popover';
-import { Badge } from './components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './components/ui/dialog';
-import { Search, Plus, Building2, User, Calendar as CalendarIcon, Briefcase, Filter, MoreHorizontal } from 'lucide-react';
-import { format } from 'date-fns';
 import './App.css';
 
 const statusColors = {
