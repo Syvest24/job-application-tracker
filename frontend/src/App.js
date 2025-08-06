@@ -215,7 +215,7 @@ function App() {
                 <SelectValue placeholder="Filter by Progress" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Progress</SelectItem>
+                <SelectItem value="all">All Progress</SelectItem>
                 <SelectItem value="Not Started">Not Started</SelectItem>
                 <SelectItem value="In Progress">In Progress</SelectItem>
                 <SelectItem value="Completed">Completed</SelectItem>
