@@ -20,7 +20,7 @@ app.add_middleware(
 
 # MongoDB connection
 mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-db_name = os.environ.get('DB_NAME', 'test_database')
+db_name = os.environ.get('DB_NAME', 'jobapp0')
 
 client = pymongo.MongoClient(mongo_url)
 db = client[db_name]
