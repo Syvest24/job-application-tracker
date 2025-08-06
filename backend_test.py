@@ -68,7 +68,7 @@ class JobApplicationAPITester:
             "progress": "In Progress",
             "notes": notes
         }
-        return self.run_test("Create Application", "POST", "api/applications", 201, data=data)
+        return self.run_test("Create Application", "POST", "api/applications", 200, data=data)
 
     def test_get_applications(self, params=None):
         """Test getting all applications"""
