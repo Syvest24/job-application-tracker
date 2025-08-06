@@ -74,7 +74,7 @@ def create_application(application: JobApplication):
     
     applications_collection.insert_one(app_dict)
     
-    return JobApplicationResponse(**app_dict, application_date=application.application_date)
+    return JobApplicationResponse(**app_dict)
 
 @app.get("/api/applications", response_model=List[JobApplicationResponse])
 def get_applications(
