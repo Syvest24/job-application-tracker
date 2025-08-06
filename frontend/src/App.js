@@ -30,8 +30,8 @@ function App() {
   const [applications, setApplications] = useState([]);
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [progressFilter, setProgressFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [progressFilter, setProgressFilter] = useState('all');
   const [stats, setStats] = useState({ total: 0, by_status: {} });
   const [loading, setLoading] = useState(true);
   
