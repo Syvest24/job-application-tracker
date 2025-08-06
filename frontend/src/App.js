@@ -203,7 +203,7 @@ function App() {
                 <SelectValue placeholder="Filter by Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Statuses</SelectItem>
+                <SelectItem value="all">All Statuses</SelectItem>
                 <SelectItem value="Applied">Applied</SelectItem>
                 <SelectItem value="Interviewing">Interviewing</SelectItem>
                 <SelectItem value="Offer">Offer</SelectItem>
