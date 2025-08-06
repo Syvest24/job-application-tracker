@@ -56,8 +56,8 @@ function App() {
     try {
       const params = new URLSearchParams();
       if (searchTerm) params.append('search', searchTerm);
-      if (statusFilter) params.append('status', statusFilter);
-      if (progressFilter) params.append('progress', progressFilter);
+      if (statusFilter && statusFilter !== 'all') params.append('status', statusFilter);
+      if (progressFilter && progressFilter !== 'all') params.append('progress', progressFilter);
       
       const response = await fetch(`${backendUrl}/api/applications?${params}`);
       const data = await response.json();
