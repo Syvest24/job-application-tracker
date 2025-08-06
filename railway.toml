@@ -1,0 +1,17 @@
+[build]
+builder = "NIXPACKS"
+
+[build.nixpacksConfig]
+providers = ["python"]
+
+[build.nixpacksConfig.phases.setup]
+nixPkgs = ["python39", "pip"]
+
+[build.nixpacksConfig.phases.install]
+cmds = ["pip install -r backend/requirements.txt"]
+
+[build.nixpacksConfig.phases.start]
+cmd = "cd backend && python server.py"
+
+[variables]
+PORT = "8001"
