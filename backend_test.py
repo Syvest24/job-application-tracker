@@ -4,7 +4,7 @@ from datetime import datetime, date
 import json
 
 class JobApplicationAPITester:
-    def __init__(self, base_url="https://6fef2d35-8509-4608-a15a-41d20b957f74.preview.emergentagent.com"):
+    def __init__(self, base_url="https://edit-enhance-1.preview.emergentagent.com"):
         self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0
