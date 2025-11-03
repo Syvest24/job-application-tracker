@@ -496,7 +496,7 @@ function App() {
             <Briefcase className="mx-auto h-12 w-12 text-gray-400 mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No applications found</h3>
             <p className="text-gray-600 mb-4">
-              {searchTerm || statusFilter || progressFilter 
+              {debouncedSearch || statusFilter || progressFilter 
                 ? "Try adjusting your search or filters"
                 : "Get started by adding your first job application"
               }
@@ -505,6 +505,83 @@ function App() {
               <Plus className="mr-2 h-4 w-4" />
               Add Your First Application
             </Button>
+          </div>
+        )}
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && applications.length > 0 && (
+          <div className="mt-8 bg-white rounded-lg shadow-sm p-6">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="text-sm text-gray-600">
+                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, totalApplications)} of {totalApplications} applications
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="disabled:opacity-50"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                
+                <div className="flex gap-1">
+                  {currentPage > 3 && (
+                    <>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => goToPage(1)}
+                        className="w-10"
+                      >
+                        1
+                      </Button>
+                      {currentPage > 4 && <span className="px-2 py-1">...</span>}
+                    </>
+                  )}
+                  
+                  {getPageNumbers().map(page => (
+                    <Button
+                      key={page}
+                      variant={currentPage === page ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => goToPage(page)}
+                      className={`w-10 ${currentPage === page ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
+                    >
+                      {page}
+                    </Button>
+                  ))}
+                  
+                  {currentPage < totalPages - 2 && (
+                    <>
+                      {currentPage < totalPages - 3 && <span className="px-2 py-1">...</span>}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => goToPage(totalPages)}
+                        className="w-10"
+                      >
+                        {totalPages}
+                      </Button>
+                    </>
+                  )}
+                </div>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="disabled:opacity-50"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
           </div>
         )}
       </div>
