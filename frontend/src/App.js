@@ -185,13 +185,42 @@ function App() {
         });
         
         if (response.ok) {
-          fetchApplications();
+          // If deleting the last item on current page, go to previous page
+          if (applications.length === 1 && currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+          } else {
+            fetchApplications();
+          }
           fetchStats();
         }
       } catch (error) {
         console.error('Failed to delete application:', error);
       }
     }
+  };
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxPagesToShow = 5;
+    
+    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+    
+    if (endPage - startPage < maxPagesToShow - 1) {
+      startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    
+    return pages;
   };
 
   if (loading) {
