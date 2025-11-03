@@ -97,6 +97,10 @@ def get_applications(
             {"recruiter_name": {"$regex": search, "$options": "i"}}
         ]
     
+    # Validate pagination parameters
+    page = max(1, page)  # Ensure page is at least 1
+    limit = max(1, min(100, limit))  # Ensure limit is between 1 and 100
+    
     # Calculate pagination
     skip = (page - 1) * limit
     total = applications_collection.count_documents(query)
