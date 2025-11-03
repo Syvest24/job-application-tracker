@@ -104,8 +104,14 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${backendUrl}/api/applications`, {
-        method: 'POST',
+      const url = editingApp 
+        ? `${backendUrl}/api/applications/${editingApp.id}`
+        : `${backendUrl}/api/applications`;
+      
+      const method = editingApp ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -116,22 +122,40 @@ function App() {
       });
       
       if (response.ok) {
-        setFormData({
-          job_title: '',
-          company_name: '',
-          recruiter_name: '',
-          application_date: new Date(),
-          status: 'Applied',
-          progress: 'Not Started',
-          notes: ''
-        });
-        setIsAddingNew(false);
+        resetForm();
         fetchApplications();
         fetchStats();
       }
     } catch (error) {
-      console.error('Failed to create application:', error);
+      console.error('Failed to save application:', error);
     }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      job_title: '',
+      company_name: '',
+      recruiter_name: '',
+      application_date: new Date(),
+      status: 'Applied',
+      progress: 'Not Started',
+      notes: ''
+    });
+    setIsAddingNew(false);
+    setEditingApp(null);
+  };
+
+  const handleEdit = (app) => {
+    setFormData({
+      job_title: app.job_title,
+      company_name: app.company_name,
+      recruiter_name: app.recruiter_name || '',
+      application_date: new Date(app.application_date),
+      status: app.status,
+      progress: app.progress,
+      notes: app.notes || ''
+    });
+    setEditingApp(app);
   };
 
   const updateApplicationStatus = async (id, status) => {
