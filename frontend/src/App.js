@@ -296,16 +296,19 @@ function App() {
                 <SelectItem value="Completed">Completed</SelectItem>
               </SelectContent>
             </Select>
-            <Dialog open={isAddingNew} onOpenChange={setIsAddingNew}>
+            <Dialog open={isAddingNew || editingApp !== null} onOpenChange={(open) => {
+              if (!open) resetForm();
+              else setIsAddingNew(true);
+            }}>
               <DialogTrigger asChild>
                 <Button className="w-full md:w-auto bg-blue-600 hover:bg-blue-700">
                   <Plus className="mr-2 h-4 w-4" />
                   Add Application
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-md">
+              <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>Add New Application</DialogTitle>
+                  <DialogTitle>{editingApp ? 'Edit Application' : 'Add New Application'}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
