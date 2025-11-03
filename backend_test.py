@@ -122,6 +122,226 @@ class JobApplicationAPITester:
             
         return True
 
+    def test_basic_pagination(self):
+        """Test basic pagination functionality"""
+        print("\n🔍 Testing Basic Pagination...")
+        
+        # Test with page=1&limit=20
+        success, response = self.test_get_applications(params={"page": 1, "limit": 20})
+        if not success:
+            return False, "Failed to get paginated applications"
+            
+        # Verify response structure
+        required_fields = ["applications", "total", "page", "limit", "total_pages"]
+        for field in required_fields:
+            if field not in response:
+                return False, f"Missing field '{field}' in pagination response"
+        
+        # Verify data types
+        if not isinstance(response["applications"], list):
+            return False, "Applications should be a list"
+        if not isinstance(response["total"], int):
+            return False, "Total should be an integer"
+        if not isinstance(response["page"], int):
+            return False, "Page should be an integer"
+        if not isinstance(response["limit"], int):
+            return False, "Limit should be an integer"
+        if not isinstance(response["total_pages"], int):
+            return False, "Total_pages should be an integer"
+            
+        print(f"✅ Basic pagination working - Total: {response['total']}, Page: {response['page']}, Limit: {response['limit']}, Total Pages: {response['total_pages']}")
+        return True, response
+
+    def create_test_applications(self, count=25):
+        """Create multiple test applications for pagination testing"""
+        print(f"\n🔍 Creating {count} test applications for pagination testing...")
+        
+        companies = ["TechCorp", "DataSoft", "CloudInc", "DevCorp", "StartupXYZ"]
+        job_titles = ["Software Engineer", "Frontend Developer", "Backend Developer", "Full Stack Developer", "DevOps Engineer"]
+        statuses = ["Applied", "Interviewing", "Offer", "Rejected"]
+        
+        created_ids = []
+        for i in range(count):
+            company = companies[i % len(companies)]
+            job_title = job_titles[i % len(job_titles)]
+            status = statuses[i % len(statuses)]
+            
+            success, response = self.test_create_application(
+                f"{job_title} {i+1}",
+                f"{company} {i+1}",
+                f"Recruiter {i+1}",
+                f"Test application {i+1} for pagination testing"
+            )
+            if success and 'id' in response:
+                created_ids.append(response['id'])
+            else:
+                print(f"❌ Failed to create test application {i+1}")
+                
+        print(f"✅ Created {len(created_ids)} test applications")
+        return created_ids
+
+    def test_multiple_pages(self):
+        """Test pagination across multiple pages"""
+        print("\n🔍 Testing Multiple Pages...")
+        
+        # Create test applications first
+        test_app_ids = self.create_test_applications(25)
+        
+        # Test page 1
+        success, page1_response = self.test_get_applications(params={"page": 1, "limit": 20})
+        if not success:
+            return False, "Failed to get page 1"
+            
+        # Test page 2
+        success, page2_response = self.test_get_applications(params={"page": 2, "limit": 20})
+        if not success:
+            return False, "Failed to get page 2"
+            
+        # Verify different applications are returned
+        page1_ids = [app['id'] for app in page1_response['applications']]
+        page2_ids = [app['id'] for app in page2_response['applications']]
+        
+        if set(page1_ids) & set(page2_ids):
+            return False, "Same applications found on different pages"
+            
+        # Verify total count is consistent
+        if page1_response['total'] != page2_response['total']:
+            return False, "Total count inconsistent across pages"
+            
+        print(f"✅ Multiple pages working - Page 1: {len(page1_response['applications'])} apps, Page 2: {len(page2_response['applications'])} apps")
+        
+        # Cleanup test applications
+        for app_id in test_app_ids:
+            self.test_delete_application(app_id)
+            
+        return True, {"page1": page1_response, "page2": page2_response}
+
+    def test_pagination_with_filters(self):
+        """Test pagination combined with filters"""
+        print("\n🔍 Testing Pagination with Filters...")
+        
+        # Create some test applications with specific status
+        test_app_ids = []
+        for i in range(10):
+            success, response = self.test_create_application(
+                f"Test Job {i}",
+                f"Test Company {i}",
+                f"Test Recruiter {i}",
+                "Test for pagination with filters"
+            )
+            if success and 'id' in response:
+                test_app_ids.append(response['id'])
+        
+        # Test pagination with status filter
+        success, filtered_response = self.test_get_applications(params={
+            "status": "Applied", 
+            "page": 1, 
+            "limit": 5
+        })
+        if not success:
+            return False, "Failed to get filtered paginated applications"
+            
+        # Verify response structure
+        if "applications" not in filtered_response or "total" not in filtered_response:
+            return False, "Missing fields in filtered pagination response"
+            
+        # Test pagination with search
+        success, search_response = self.test_get_applications(params={
+            "search": "Test", 
+            "page": 1, 
+            "limit": 5
+        })
+        if not success:
+            return False, "Failed to get search paginated applications"
+            
+        print(f"✅ Pagination with filters working - Status filter: {len(filtered_response['applications'])} apps, Search: {len(search_response['applications'])} apps")
+        
+        # Cleanup
+        for app_id in test_app_ids:
+            self.test_delete_application(app_id)
+            
+        return True, {"filtered": filtered_response, "search": search_response}
+
+    def test_pagination_edge_cases(self):
+        """Test pagination edge cases"""
+        print("\n🔍 Testing Pagination Edge Cases...")
+        
+        # Test with no applications (empty database scenario)
+        # First, let's get current count and test with high page number
+        success, current_response = self.test_get_applications(params={"page": 1, "limit": 20})
+        if not success:
+            return False, "Failed to get current applications"
+            
+        # Test invalid page numbers
+        success, zero_page = self.test_get_applications(params={"page": 0, "limit": 20})
+        if not success:
+            return False, "Failed to test page=0"
+            
+        success, high_page = self.test_get_applications(params={"page": 999, "limit": 20})
+        if not success:
+            return False, "Failed to test page=999"
+            
+        # Test without pagination params (should default)
+        success, default_response = self.test_get_applications()
+        if not success:
+            return False, "Failed to test default pagination"
+            
+        # Verify defaults
+        if default_response.get("page") != 1 or default_response.get("limit") != 20:
+            return False, f"Default pagination incorrect - page: {default_response.get('page')}, limit: {default_response.get('limit')}"
+            
+        print(f"✅ Edge cases working - Default page: {default_response['page']}, Default limit: {default_response['limit']}")
+        return True, {"default": default_response, "high_page": high_page}
+
+    def test_existing_crud_operations(self):
+        """Test all existing CRUD operations"""
+        print("\n🔍 Testing Existing CRUD Operations...")
+        
+        # Test POST - Create
+        success, new_app = self.test_create_application(
+            "CRUD Test Job",
+            "CRUD Test Company", 
+            "CRUD Test Recruiter",
+            "Testing CRUD operations"
+        )
+        if not success:
+            return False, "POST /api/applications failed"
+            
+        app_id = new_app.get('id')
+        if not app_id:
+            return False, "No ID returned from POST"
+            
+        # Test GET single - Read
+        success, get_app = self.test_get_application_by_id(app_id)
+        if not success:
+            return False, f"GET /api/applications/{app_id} failed"
+            
+        # Test PUT - Update
+        update_data = {
+            "status": "Interviewing",
+            "notes": "Updated for CRUD testing"
+        }
+        success, updated_app = self.test_update_application(app_id, update_data)
+        if not success:
+            return False, f"PUT /api/applications/{app_id} failed"
+            
+        # Verify update worked
+        if updated_app.get('status') != 'Interviewing':
+            return False, "Update did not change status"
+            
+        # Test DELETE
+        success, _ = self.test_delete_application(app_id)
+        if not success:
+            return False, f"DELETE /api/applications/{app_id} failed"
+            
+        # Test GET stats
+        success, stats = self.test_get_stats()
+        if not success:
+            return False, "GET /api/applications/stats/summary failed"
+            
+        print("✅ All CRUD operations working correctly")
+        return True, {"created": new_app, "updated": updated_app, "stats": stats}
+
 def main():
     print("🚀 Starting Job Application Tracker API Tests")
     print("=" * 60)
