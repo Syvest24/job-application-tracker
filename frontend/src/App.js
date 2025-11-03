@@ -396,8 +396,10 @@ function App() {
                     />
                   </div>
                   <div className="flex gap-2 pt-4">
-                    <Button type="submit" className="flex-1">Add Application</Button>
-                    <Button type="button" variant="outline" onClick={() => setIsAddingNew(false)}>
+                    <Button type="submit" className="flex-1">
+                      {editingApp ? 'Update Application' : 'Add Application'}
+                    </Button>
+                    <Button type="button" variant="outline" onClick={resetForm}>
                       Cancel
                     </Button>
                   </div>
