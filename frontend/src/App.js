@@ -29,11 +29,17 @@ const progressColors = {
 function App() {
   const [applications, setApplications] = useState([]);
   const [isAddingNew, setIsAddingNew] = useState(false);
+  const [editingApp, setEditingApp] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [progressFilter, setProgressFilter] = useState('all');
   const [stats, setStats] = useState({ total: 0, by_status: {} });
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalApplications, setTotalApplications] = useState(0);
+  const itemsPerPage = 20;
   
   const [formData, setFormData] = useState({
     job_title: '',
@@ -46,6 +52,16 @@ function App() {
   });
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
+  // Debounce search input for better performance
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setCurrentPage(1); // Reset to first page on search
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   useEffect(() => {
     fetchApplications();
