@@ -76,11 +76,13 @@ def create_application(application: JobApplication):
     
     return JobApplicationResponse(**app_dict)
 
-@app.get("/api/applications", response_model=List[JobApplicationResponse])
+@app.get("/api/applications")
 def get_applications(
     status: Optional[str] = None,
     search: Optional[str] = None,
-    progress: Optional[str] = None
+    progress: Optional[str] = None,
+    page: Optional[int] = 1,
+    limit: Optional[int] = 20
 ):
     query = {}
     
@@ -95,13 +97,28 @@ def get_applications(
             {"recruiter_name": {"$regex": search, "$options": "i"}}
         ]
     
-    applications = list(applications_collection.find(query, {"_id": 0}).sort("created_at", -1))
+    # Calculate pagination
+    skip = (page - 1) * limit
+    total = applications_collection.count_documents(query)
+    
+    applications = list(
+        applications_collection.find(query, {"_id": 0})
+        .sort("created_at", -1)
+        .skip(skip)
+        .limit(limit)
+    )
     
     for app in applications:
         if isinstance(app["application_date"], str):
             app["application_date"] = datetime.fromisoformat(app["application_date"]).date()
     
-    return applications
+    return {
+        "applications": applications,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": (total + limit - 1) // limit
+    }
 
 @app.get("/api/applications/{app_id}", response_model=JobApplicationResponse)
 def get_application(app_id: str):
