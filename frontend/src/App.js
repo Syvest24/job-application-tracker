@@ -66,18 +66,24 @@ function App() {
   useEffect(() => {
     fetchApplications();
     fetchStats();
-  }, [searchTerm, statusFilter, progressFilter]);
+  }, [debouncedSearch, statusFilter, progressFilter, currentPage]);
 
   const fetchApplications = async () => {
     try {
+      setLoading(true);
       const params = new URLSearchParams();
-      if (searchTerm) params.append('search', searchTerm);
+      if (debouncedSearch) params.append('search', debouncedSearch);
       if (statusFilter && statusFilter !== 'all') params.append('status', statusFilter);
       if (progressFilter && progressFilter !== 'all') params.append('progress', progressFilter);
+      params.append('page', currentPage);
+      params.append('limit', itemsPerPage);
       
       const response = await fetch(`${backendUrl}/api/applications?${params}`);
       const data = await response.json();
-      setApplications(data);
+      
+      setApplications(data.applications || []);
+      setTotalPages(data.total_pages || 1);
+      setTotalApplications(data.total || 0);
       setLoading(false);
     } catch (error) {
       console.error('Failed to fetch applications:', error);
