@@ -343,10 +343,11 @@ class JobApplicationAPITester:
         return True, {"created": new_app, "updated": updated_app, "stats": stats}
 
 def main():
-    print("🚀 Starting Job Application Tracker API Tests")
-    print("=" * 60)
+    print("🚀 Starting Job Application Tracker API Tests with Pagination Focus")
+    print("=" * 80)
     
     tester = JobApplicationAPITester()
+    failed_tests = []
     
     # Test 1: Root endpoint
     success, _ = tester.test_root_endpoint()
@@ -354,76 +355,81 @@ def main():
         print("❌ Root endpoint failed, stopping tests")
         return 1
 
-    # Test 2: Get initial stats
-    success, initial_stats = tester.test_get_stats()
-    if success:
-        print(f"   Initial stats: {initial_stats}")
-
-    # Test 3: Get existing applications
-    success, existing_apps = tester.test_get_applications()
-    if success:
-        print(f"   Found {len(existing_apps)} existing applications")
-
-    # Test 4: Create new application
-    success, new_app = tester.test_create_application(
-        "Frontend Developer", 
-        "TechCorp Inc", 
-        "Sarah Johnson",
-        "Applied via company website"
-    )
+    # Test 2: Basic Pagination Test
+    success, response = tester.test_basic_pagination()
     if not success:
-        print("❌ Application creation failed")
-        return 1
+        failed_tests.append(f"Basic Pagination: {response}")
+        print(f"❌ Basic pagination failed: {response}")
+    else:
+        print("✅ Basic pagination test passed")
 
-    # Test 5: Get application by ID
-    if tester.created_app_ids:
-        app_id = tester.created_app_ids[0]
-        success, _ = tester.test_get_application_by_id(app_id)
-        if not success:
-            print("❌ Get application by ID failed")
-            return 1
+    # Test 3: Multiple Pages Test
+    success, response = tester.test_multiple_pages()
+    if not success:
+        failed_tests.append(f"Multiple Pages: {response}")
+        print(f"❌ Multiple pages test failed: {response}")
+    else:
+        print("✅ Multiple pages test passed")
 
-        # Test 6: Update application
-        update_data = {"status": "Interviewing"}
-        success, _ = tester.test_update_application(app_id, update_data)
-        if not success:
-            print("❌ Update application failed")
-            return 1
+    # Test 4: Pagination with Filters
+    success, response = tester.test_pagination_with_filters()
+    if not success:
+        failed_tests.append(f"Pagination with Filters: {response}")
+        print(f"❌ Pagination with filters failed: {response}")
+    else:
+        print("✅ Pagination with filters test passed")
+
+    # Test 5: Pagination Edge Cases
+    success, response = tester.test_pagination_edge_cases()
+    if not success:
+        failed_tests.append(f"Pagination Edge Cases: {response}")
+        print(f"❌ Pagination edge cases failed: {response}")
+    else:
+        print("✅ Pagination edge cases test passed")
+
+    # Test 6: Existing CRUD Operations
+    success, response = tester.test_existing_crud_operations()
+    if not success:
+        failed_tests.append(f"CRUD Operations: {response}")
+        print(f"❌ CRUD operations failed: {response}")
+    else:
+        print("✅ CRUD operations test passed")
 
     # Test 7: Search functionality
     if not tester.test_search_functionality():
+        failed_tests.append("Search functionality failed")
         print("❌ Search functionality failed")
-        return 1
+    else:
+        print("✅ Search functionality test passed")
 
     # Test 8: Filter functionality
     if not tester.test_filter_functionality():
+        failed_tests.append("Filter functionality failed")
         print("❌ Filter functionality failed")
-        return 1
+    else:
+        print("✅ Filter functionality test passed")
 
-    # Test 9: Get updated stats
-    success, final_stats = tester.test_get_stats()
+    # Test 9: Get stats
+    success, stats = tester.test_get_stats()
     if success:
-        print(f"   Final stats: {final_stats}")
-
-    # Test 10: Delete created application (cleanup)
-    if tester.created_app_ids:
-        app_id = tester.created_app_ids[0]
-        success, _ = tester.test_delete_application(app_id)
-        if not success:
-            print("❌ Delete application failed")
-            return 1
+        print(f"✅ Stats endpoint working - {stats}")
+    else:
+        failed_tests.append("Stats endpoint failed")
 
     # Print final results
-    print("\n" + "=" * 60)
+    print("\n" + "=" * 80)
     print(f"📊 Backend API Tests Summary:")
     print(f"   Tests passed: {tester.tests_passed}/{tester.tests_run}")
     
-    if tester.tests_passed == tester.tests_run:
-        print("✅ All backend tests passed! API is working correctly.")
-        return 0
-    else:
-        print("❌ Some backend tests failed. Check the details above.")
+    if failed_tests:
+        print("\n❌ Failed Tests:")
+        for i, failure in enumerate(failed_tests, 1):
+            print(f"   {i}. {failure}")
+        print("\n❌ Some backend tests failed. Check the details above.")
         return 1
+    else:
+        print("✅ All backend tests passed! Pagination and API working correctly.")
+        return 0
 
 if __name__ == "__main__":
     sys.exit(main())
