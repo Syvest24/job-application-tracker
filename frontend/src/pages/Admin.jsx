@@ -8,6 +8,7 @@ import { Textarea } from '../components/ui/textarea';
 import { Lock, Upload, Check, X, Save } from 'lucide-react';
 
 function Admin() {
+  const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [adminToken, setAdminToken] = useState('');
