@@ -329,16 +329,62 @@ function JobTracker() {
                 <SelectItem value="Completed">Completed</SelectItem>
               </SelectContent>
             </Select>
+            
+            {/* Add Application Button with Auth */}
+            <Button 
+              onClick={handleAddClick}
+              className="w-full md:w-auto bg-blue-600 hover:bg-blue-700"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Application
+            </Button>
+            
+            {/* Auth Dialog */}
+            <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
+              <DialogContent className="max-w-sm">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center">
+                    <Lock className="mr-2 h-5 w-5 text-blue-600" />
+                    Admin Authentication Required
+                  </DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleAuth} className="space-y-4">
+                  <div>
+                    <Label htmlFor="admin_password">Enter Admin Password</Label>
+                    <Input
+                      id="admin_password"
+                      type="password"
+                      value={adminPassword}
+                      onChange={(e) => {
+                        setAdminPassword(e.target.value);
+                        setAuthError('');
+                      }}
+                      placeholder="Enter password"
+                      required
+                    />
+                    {authError && <p className="text-sm text-red-600 mt-1">{authError}</p>}
+                    <p className="text-xs text-gray-500 mt-1">Contact admin if you don't have access</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-700">
+                      Login
+                    </Button>
+                    <Button type="button" variant="outline" onClick={() => {
+                      setShowAuthDialog(false);
+                      setAdminPassword('');
+                      setAuthError('');
+                    }}>
+                      Cancel
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+            
+            {/* Application Form Dialog */}
             <Dialog open={isAddingNew || editingApp !== null} onOpenChange={(open) => {
               if (!open) resetForm();
-              else setIsAddingNew(true);
             }}>
-              <DialogTrigger asChild>
-                <Button className="w-full md:w-auto bg-blue-600 hover:bg-blue-700">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Application
-                </Button>
-              </DialogTrigger>
               <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>{editingApp ? 'Edit Application' : 'Add New Application'}</DialogTitle>
