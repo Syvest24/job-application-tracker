@@ -146,6 +146,43 @@ function JobTracker() {
     setEditingApp(null);
   };
 
+  const handleAddClick = () => {
+    if (isAuthenticated) {
+      setIsAddingNew(true);
+    } else {
+      setShowAuthDialog(true);
+    }
+  };
+
+  const handleAuth = (e) => {
+    e.preventDefault();
+    // Simple client-side check - password should match backend ADMIN_PASSWORD
+    if (adminPassword) {
+      setIsAuthenticated(true);
+      setShowAuthDialog(false);
+      setIsAddingNew(true);
+      setAdminPassword('');
+      setAuthError('');
+      // Store in sessionStorage to persist during session
+      sessionStorage.setItem('jobTrackerAuth', 'true');
+    } else {
+      setAuthError('Please enter password');
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    sessionStorage.removeItem('jobTrackerAuth');
+  };
+
+  // Check if already authenticated in this session
+  useEffect(() => {
+    const auth = sessionStorage.getItem('jobTrackerAuth');
+    if (auth === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
   const handleEdit = (app) => {
     setFormData({
       job_title: app.job_title,
