@@ -220,6 +220,10 @@ function JobTracker() {
   };
 
   const deleteApplication = async (id) => {
+    if (!isAuthenticated) {
+      setShowAuthDialog(true);
+      return;
+    }
     if (window.confirm('Are you sure you want to delete this application?')) {
       try {
         const response = await fetch(`${backendUrl}/api/applications/${id}`, {
