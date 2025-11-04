@@ -106,8 +106,11 @@ function Admin() {
       });
 
       if (response.ok) {
-        showMessage('success', 'Portfolio updated successfully!');
-        fetchPortfolio();
+        showMessage('success', 'Portfolio updated successfully! Redirecting...');
+        // Wait 1.5 seconds to show success message, then redirect
+        setTimeout(() => {
+          navigate('/portfolio');
+        }, 1500);
       } else {
         const error = await response.json();
         showMessage('error', error.detail || 'Failed to update portfolio');
