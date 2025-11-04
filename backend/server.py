@@ -263,8 +263,15 @@ def get_portfolio():
             "github": "",
             "location": ""
         }
-        portfolio_collection.insert_one(default_portfolio)
-        portfolio = default_portfolio
+        portfolio_collection.insert_one(default_portfolio.copy())
+        # Remove _id if exists
+        if "_id" in default_portfolio:
+            del default_portfolio["_id"]
+        return default_portfolio
+    
+    # Ensure _id is removed
+    if "_id" in portfolio:
+        del portfolio["_id"]
     
     return portfolio
 
