@@ -184,6 +184,10 @@ function JobTracker() {
   }, []);
 
   const handleEdit = (app) => {
+    if (!isAuthenticated) {
+      setShowAuthDialog(true);
+      return;
+    }
     setFormData({
       job_title: app.job_title,
       company_name: app.company_name,
