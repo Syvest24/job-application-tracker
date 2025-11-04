@@ -1,17 +1,27 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './components/ui/card';
-import { Button } from './components/ui/button';
-import { Input } from './components/ui/input';
-import { Label } from './components/ui/label';
-import { Textarea } from './components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select';
-import { Calendar } from './components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from './components/ui/popover';
-import { Badge } from './components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './components/ui/dialog';
-import { Search, Plus, Building2, User, Calendar as CalendarIcon, Briefcase, MoreHorizontal, Edit2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { format } from 'date-fns';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navigation from './components/layout/Navigation';
+import JobTracker from './pages/JobTracker';
+import Portfolio from './pages/Portfolio';
+import Admin from './pages/Admin';
 import './App.css';
+
+function App() {
+  return (
+    <Router>
+      <div className="App">
+        <Navigation />
+        <Routes>
+          <Route path="/" element={<JobTracker />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/admin" element={<Admin />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+}
+
+export default App;
 
 const statusColors = {
   'Applied': 'bg-blue-100 text-blue-800',
