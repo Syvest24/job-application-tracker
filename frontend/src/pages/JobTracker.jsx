@@ -9,7 +9,7 @@ import { Calendar } from '../components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { Badge } from '../components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
-import { Search, Plus, Building2, User, Calendar as CalendarIcon, Briefcase, Edit2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Plus, Building2, User, Calendar as CalendarIcon, Briefcase, Edit2, Trash2, ChevronLeft, ChevronRight, Lock } from 'lucide-react';
 import { format } from 'date-fns';
 
 const statusColors = {
