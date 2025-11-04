@@ -27,6 +27,8 @@ db_name = os.environ.get('DB_NAME', 'jobapp0')
 client = pymongo.MongoClient(mongo_url)
 db = client[db_name]
 applications_collection = db.applications
+portfolio_collection = db.portfolio
+cv_files_collection = db.cv_files
 
 # Pydantic models
 class JobApplication(BaseModel):
