@@ -273,9 +273,22 @@ function JobTracker() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Job Application Tracker</h1>
-          <p className="text-gray-600">Stay organized and track your job search progress</p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">Job Application Tracker</h1>
+            <p className="text-gray-600">Stay organized and track your job search progress</p>
+          </div>
+          {isAuthenticated && (
+            <Button 
+              onClick={handleLogout}
+              variant="outline"
+              size="sm"
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <Lock className="mr-2 h-4 w-4" />
+              Logout Admin
+            </Button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
