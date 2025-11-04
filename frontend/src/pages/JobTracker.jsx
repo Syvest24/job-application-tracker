@@ -28,6 +28,10 @@ const progressColors = {
 function JobTracker() {
   const [applications, setApplications] = useState([]);
   const [isAddingNew, setIsAddingNew] = useState(false);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authError, setAuthError] = useState('');
   const [editingApp, setEditingApp] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
